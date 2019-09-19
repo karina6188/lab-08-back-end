@@ -2,14 +2,17 @@
 //server
 const express = require('express');
 const cors = require('cors');
+const pg = require('pg');
 const superAgent = require('superagent');
 
 require('dotenv').config();
 
 const app = express();
-
 app.use(cors());
-const PORT= process.env.PORT || 3000
+
+const PORT = process.env.PORT || 3000
+
+const client = new pg.Client(process.env.DATABASE_URL);
 
 // constructor funcitons -------------------------------------------------------------------------------
 function Location(searchQuery, formatted_address, lat, long) {
@@ -42,14 +45,17 @@ app.get('/location', (request, response) => {
       const lat = responsefromAgent.body.results[0].geometry.location.lat;
       const long = responsefromAgent.body.results[0].geometry.location.lng;
 
-      const location = new Location(searchQuery, formatted_address, lat, long)
+      const newLocation = new Location(searchQuery, formatted_address, lat, long)
 
-      response.status(200).send(location);
+      let sql = `INSERT INTO location (search_query, formatted_address, latitude, longitude) VALUES ($1, $2, $3, $4);`;
+      let value = [newLocation.search_query, newLocation.formatted_address, newLocation.lat, newLocation.long];
+      client.query(sql, value)
+      response.send(newLocation);
     })
     .catch(error => {
-      console.log('Something went wrong');
-    })
-})
+      errorHandler(error, request, response);
+    });
+});
 
 app.get('/weather', (request, response) => {
   let locationDataObj = request.query.data;
@@ -65,8 +71,8 @@ app.get('/weather', (request, response) => {
       response.send(dailyArray);
     })
     .catch(error => {
-      console.log('Something went wrong');
-    })
+      errorHandler(error, request, response);
+    });
 });
 
 app.get('/events', (request, response) => {
@@ -80,12 +86,13 @@ app.get('/events', (request, response) => {
       response.send(eventBriteInfo);
     })
     .catch(error => {
-      console.log('Something went wrong');
-    })
+      errorHandler(error, request, response);
+    });
 });
 
-app.use('*', (request, response) => {
-  response.status(500).send('Sorry, something went wrong');
-});
+function errorHandler(error, request, response){
+  console.error(error);
+  response.status(500).send('Something went wrong');
+}
 
 app.listen(PORT, () => {console.log(`listening on port ${PORT}`)});
