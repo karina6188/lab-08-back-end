@@ -19,7 +19,9 @@ In this app, we used JavaScript, Express, cors, and dotenv. Express is the libra
 
 09-17-2019 11:25am - App is now successfully running on the express server and is deployed through Heroku. The app has the first feature 'Location', which has a route of /location and shows the location's search query, formatted address, latitude, and longitude.
 
-09-17-2019 12:40am - The second feature 'Weather' of the app is now available and is deployed on Heroku. This feature allows the users to know the upcoming 8 days of weather conditions of the location they input.
+09-17-2019 12:40pm - The second feature 'Weather' of the app is now available and is deployed on Heroku. This feature allows the users to know the upcoming 8 days of weather conditions of the location they input.
+
+09-18-2019 12:00pm - The third feature 'EventBrite' of the app is completed and is deployed on Heroku. The feature allows the users to see all the events on EventBrite near the location they serached.
 
 ## Credits and Collaborations
 <!-- Give credit (and a link) to other people or resources that helped you build this application. -->
